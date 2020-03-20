@@ -17,7 +17,7 @@ class Blockchain:
         # Create the genesis block
         self._create_block(0, 'Genesis')
 
-    def create_block(self, nonce, previous_hash):
+    def _create_block(self, nonce, previous_hash):
         """
         Add a block of transaction to the blockchain
         :param nonce:
