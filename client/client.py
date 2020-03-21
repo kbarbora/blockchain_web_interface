@@ -1,15 +1,17 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import Crypto
 import Crypto.Random
+from Crypto.Signature import PKCS1_v1_5
 from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA
 import binascii
-
+from collections import OrderedDict
 """
 """
 
 
 class Transaction:
-    def __init__(self, sender_add, sender_priv, recipient_add, value):
+    def __init__(self, sender_public_key, sender_private_key, recipient_public_key, amount):
         """
 
         :param sender_add:
@@ -17,11 +19,24 @@ class Transaction:
         :param recipient_add:
         :param value:
         """
-        self._sender_add = sender_add
-        self._sender_priv = sender_priv
-        self._recipient_add = recipient_add
-        self._value = value
+        self._sender_public_key = sender_public_key
+        self._sender_private_key = sender_private_key
+        self._recipient_public_key = recipient_public_key
+        self._amount = amount
 
+    def to_dict(self):
+        return OrderedDict({
+            'sender_public_key': self._sender_public_key,
+            'sender_private_key': self._sender_private_key,
+            'recipient_public_key': self._recipient_public_key,
+            'amount': self._amount
+        })
+
+    def sign(self):
+        private_key = RSA.importKey(binascii.unhexlify(self._sender_private_key))
+        signer = PKCS1_v1_5.new(private_key)
+        hash_from_sign = SHA.new(str(self.to_dict()).encode('utf-8'))
+        return binascii.hexlify(signer.sign(hash_from_sign)).decode('ascii')
 
 app = Flask(__name__)
 
@@ -38,7 +53,15 @@ def make_transaction():
 
 @app.route('/generate/transaction', methods=['POST'])
 def generate_transaction():
-    return "Done"
+    sender_public_key = request.form['sender_public_key']
+    sender_private_key = request.form['sender_private_key']
+    recipient_public_key = request.form['recipient_public_key']
+    amount = request.form['amount']
+    transaction = Transaction(sender_public_key, sender_private_key, recipient_public_key, amount)
+    response = {
+        'transaction': transaction.to_dict(),
+        'signature': transaction.sign()}
+    return jsonify(response), 200
 
 
 @app.route('/view/transaction')
