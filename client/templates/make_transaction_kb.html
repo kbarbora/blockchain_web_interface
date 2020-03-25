@@ -40,12 +40,12 @@
             <div class="col-lg-12 text-center">
                 <div class="card-body">
                     <h4 class="card-title">Send Coins:</h4>
-                    <p class="card-text">Enter transaction details and click on "Generate Transaction" button to generate your transaction</p>
+                    <p class="card-text">Enter transaction details and click on "Generate Transaction button to
+                        generate your transaction"</p>
                 </div>
             </div>
         </div>
     </div>
-
 
     <div class="container alert alert-secondary">
         <form id="transaction_form">
@@ -55,137 +55,106 @@
                     <input type="text" name="sender_public_key" id="sender_public_key" class="form-control">
                 </div>
             </div>
-
             <br>
 
-            <div class="row">
+             <div class="row">
                 <label class="col-sm-2">Sender Private Key:</label>
                 <div class="col-sm-10">
                     <input type="text" name="sender_private_key" id="sender_private_key" class="form-control">
                 </div>
             </div>
-
             <br>
-
-            <div class="row">
+             <div class="row">
                 <label class="col-sm-2">Recipient Public Key:</label>
                 <div class="col-sm-10">
                     <input type="text" name="recipient_public_key" id="recipient_public_key" class="form-control">
                 </div>
             </div>
-
             <br>
-
             <div class="row">
                 <label class="col-sm-2">Amount:</label>
                 <div class="col-sm-10">
                     <input type="text" name="amount" id="amount" class="form-control">
                 </div>
             </div>
-
             <br>
-
             <div class="row">
                 <div class="col-sm-12 text-center">
                     <input type="button" name="generate_transaction" id="generate_transaction" class="btn btn-primary btn-lg" value="Generate Transaction">
                 </div>
             </div>
-
         </form>
     </div>
 
     <!-- Modal -->
     <div class="modal modal-alert fade" id="basic_modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
       <div class="modal-dialog">
-
         <div class="modal-content">
-
           <div class="modal-header">
             <div class="modal-title col-md-10">Confirm transaction details, enter a blockchain node url and click on "Confirm Transaction" to finalize your transaction.</div>
             <button type="button" class="close col-md-2" data-dismiss="modal" aria-hidden="true">&times;</button>
           </div>
-
           <div class="modal-body">
-
             <form id="confirmation_transaction_form">
-
                 <div class="row">
                   <label class="col-sm-12">Sender Public Key:</label>
                   <div class="col-sm-12">
                     <input type="text" name="confirmation_sender_public_key" id="confirmation_sender_public_key" rows="2" class="form-control" readonly>
-
                   </div>
                 </div>
-
                 <div class="row">
                   <label class="col-sm-12">Recipient Public Key:</label>
                   <div class="col-sm-12">
                     <input type="text" name="confirmation_recipient_public_key" id="confirmation_recipient_public_key" rows="2" class="form-control" readonly>
                   </div>
                 </div>
-
                 <div class="row">
                   <label class="col-sm-12">Amount to Send:</label>
                   <div class="col-sm-12">
                     <input type="text" name="confirmation_amount" id="confirmation_amount" rows="2" class="form-control" readonly>
                   </div>
                 </div>
-
                 <div class="row">
                   <label class="col-sm-12">Transaction Signature:</label>
                   <div class="col-sm-12">
                     <input type="text" name="transaction_signature" id="transaction_signature" rows="2" class="form-control" readonly>
                   </div>
                 </div>
-
             </form>
-
-
             <div class="row">
               <label class="col-sm-12">Blockchain Node URL:</label>
               <div class="col-sm-12">
                 <input type="text" name="node_url" id="node_url" rows="2" class="form-control" value="http://127.0.0.1:5001">
               </div>
             </div>
-
           </div>
-
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             <button type="button" id="button_confirm_transaction" class="btn btn-success">Confirm Transaction</button>
           </div>
-
         </div>
-
       </div>
     </div>
-
 
     <!-- Alert Message for successful transaction -->
-    <div class="modal modal-alert fade" id="success_transaction_modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          </div>
-
-          <div class="modal-body">
-            <div class="alert alert-success" role="alert">
-              <h4 class="alert-heading">Successful Transaction!</h4>
-              <p>You successfully completed your transaction. It will be added to the next block.</p>
+    <div class="modal modal-alert-fade" id="success_transaction_modal" tabindex="-1" role="dialog" aria-labelledby="basic_modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Successful transacation!</h4>
+                        <p>You successfully completed your transaction. It will be added to the next block.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="button-confirm transaction" class="btn btn-success" data-dismiss="modal">OK</button>
+                </div>
             </div>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" id="confirm_transaction" class="btn btn-success" data-dismiss="modal">OK</button>
-          </div>
-
         </div>
-      </div>
     </div>
-
-
 
     <script src="/static/vendor/jquery/jquery.min.js"></script>
     <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -205,16 +174,14 @@
                         document.getElementById('confirmation_recipient_public_key').value = response['transaction']['recipient_public_key'];
                         document.getElementById('confirmation_amount').value = response['transaction']['amount'];
                         document.getElementById('transaction_signature').value = response['signature'];
-
                         $('#basic_modal').modal('show');
                     },
-                    error: function(error) {
-                        console.log(error);
+                    error: function (error) {
+                        console.log(error)
                     }
                 });
             });
-
-            $('#button_confirm_transaction').click(function() {
+            $('#button_confirm_transaction').click(function () {
                 $.ajax({
                     url: document.getElementById('node_url').value + '/transactions/new',
                     type: 'POST',
@@ -230,16 +197,14 @@
                         $('#basic_modal').modal('hide');
                         $('#success_transaction_modal').modal('show');
 
-                    },
+                   },
                     error: function(error) {
                         console.log(error);
                     }
-
                 });
-            });
 
+            })
         });
-
     </script>
 
 </body>

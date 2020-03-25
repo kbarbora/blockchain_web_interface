@@ -27,10 +27,8 @@ class Transaction:
     def to_dict(self):
         return OrderedDict({
             'sender_public_key': self._sender_public_key,
-            'sender_private_key': self._sender_private_key,
             'recipient_public_key': self._recipient_public_key,
-            'amount': self._amount
-        })
+            'amount': self._amount})
 
     def sign(self):
         private_key = RSA.importKey(binascii.unhexlify(self._sender_private_key))
@@ -43,12 +41,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index_kb.html')
 
 
 @app.route('/make/transaction')
 def make_transaction():
-    return render_template('make_transaction.html')
+    return render_template('make_transaction_kb.html')
 
 
 @app.route('/generate/transaction', methods=['POST'])
