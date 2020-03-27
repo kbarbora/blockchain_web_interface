@@ -7,9 +7,12 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.Hash import SHA
 from uuid import uuid4
+import json
+import hashlib
 
 MINING_SENDER = "The Blockchain"
 MINING_REWARD = 1
+MINING_DIFF = 2
 
 
 class Blockchain:
@@ -36,7 +39,8 @@ class Blockchain:
         self.chain.append(block)
         return block
 
-    def verify_transaction_signature(self, sender_public_key, signature, transaction):
+    @staticmethod
+    def verify_transaction_signature(sender_public_key, signature, transaction):
         public_key = RSA.importKey(binascii.unhexlify(sender_public_key))
         verifier = PKCS1_v1_5.new(public_key)
         h = SHA.new(str(transaction).encode('utf8'))
@@ -45,6 +49,23 @@ class Blockchain:
             return True
         except ValueError:
             return False
+
+    def valid_chain(self, chain):
+        last_block = chain[0]
+        index = 1
+        while index < len(chain):
+            block = chain[index]
+            self.hash(last_block)
+            if block['previous_hash'] != self.hash(last_block)
+                return False
+            transactions = block['transactions'][:-1]
+            transactions_elements = ['sender_public_key', 'recipient_public_key', 'amount']
+            transactions = [OrderedDict((k, transaction[k]) for k in transactions_elements) for transaction in transactions]
+            if not self.valid_proof(transactions, block['previous_hash'], block['nonce'], MINING_DIFF):
+                return False
+            last_block = block
+            index += 1
+        return True
 
     def submit_transaction(self, sender_public_key, recipient_public_key, signature, amount):
         transaction = OrderedDict({
@@ -66,11 +87,31 @@ class Blockchain:
             else:
                 return False
 
-    def proof_of_work(self):
-        return 12345
+    @staticmethod
+    def valid_proof(transactions, last_hash, nonce, difficulty=MINING_DIFF):
+        guess = (str(transactions) + str(last_hash) + str(nonce)).encode('utf8')
+        h = hashlib.new('sha256')
+        h.update(guess)
+        guess_hash = h.hexdigest()
+        mining_diff = '0' * MINING_DIFF
+        return guess_hash[:MINING_DIFF] == mining_diff
 
-    def hash(self, block_index):
-        return 'abc'
+    def proof_of_work(self):
+        last_block = self.chain[-1]
+        last_hash = self.hash(last_block)
+        nonce = 0
+        # really expensive line of code
+        while (self.valid_proof(self.transactions, last_hash, nonce)) is False:
+            nonce += 1
+        return nonce
+
+    @staticmethod
+    def hash(block):
+        # We must ensure that the dictionary is ordered, otherwise well get inconsistent hashes
+        block_string = json.dumps(block, sort_keys=True).encode("utf8")
+        hash = hashlib.new('sha256')
+        hash.update(block_string)
+        return hash.hexdigest()
 
 
 # Instantiate the Blockchain
