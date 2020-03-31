@@ -10,6 +10,7 @@ from uuid import uuid4
 import json
 import hashlib
 import requests
+from urllib.parse import urlparse
 
 MINING_SENDER = "The Blockchain"
 MINING_REWARD = 1
@@ -40,6 +41,16 @@ class Blockchain:
         self.transactions = []
         self.chain.append(block)
         return block
+
+    def register_node(self, node_url):
+        parsed_url = urlparse(node_url)
+        if parsed_url.netloc:
+            self.nodes.add(parsed_url.netloc)
+        elif parsed_url.path:
+            self.nodes.add(parsed_url.path)
+        else:
+            raise ValueError("Invalid URL")
+
 
     @staticmethod
     def verify_transaction_signature(sender_public_key, signature, transaction):
@@ -77,7 +88,7 @@ class Blockchain:
         while index < len(chain):
             block = chain[index]
             self.hash(last_block)
-            if block['previous_hash'] != self.hash(last_block)
+            if block['previous_hash'] != self.hash(last_block):
                 return False
             transactions = block['transactions'][:-1]
             transactions_elements = ['sender_public_key', 'recipient_public_key', 'amount']
@@ -201,6 +212,27 @@ def new_transaction():
     else:
         response = {'message': 'Transaction will be added to the Block ' + str(transaction_results)}
         return jsonify(response), 201
+
+
+@app.route("/nodes/get", methods=['GET'])
+def get_nodes():
+    nodes = list(blockchain.nodes)
+    response = {'nodes': nodes,}
+    return jsonify(response), 200
+
+
+@app.route("/nodes/register", methods=['POST'])
+def register_nodes():
+    values = request.form
+    nodes = values.get('nodes').replace(' ', '').split(',')
+    if nodes is Nore:
+        return "Error: Pkease supply a valid list of nodes", 400
+    for node in nodes:
+        blockchain.register_node(node)
+    response = {
+        'message': 'Nodes have been added',
+        'total_nodes': [nodes for node in blockchain.nodes]}
+    return jsonify(response), 200
 
 
 if __name__ == '__main__':
