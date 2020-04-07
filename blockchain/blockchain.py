@@ -174,6 +174,12 @@ def get_chain():
     }
     return jsonify(response), 200
 
+
+@app.route('/configure')
+def configure():
+    return render_template('./configure.html')
+
+
 @app.route('/mine', methods=['GET'])
 def mine():
     # We run the proof of work consensus algorithm
@@ -225,8 +231,8 @@ def get_nodes():
 def register_nodes():
     values = request.form
     nodes = values.get('nodes').replace(' ', '').split(',')
-    if nodes is Nore:
-        return "Error: Pkease supply a valid list of nodes", 400
+    if nodes is None:
+        return "Error: Please supply a valid list of nodes", 400
     for node in nodes:
         blockchain.register_node(node)
     response = {
